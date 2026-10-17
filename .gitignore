@@ -1,7 +1,5 @@
-# 原始版本文件夹体积过大（Java 版约 3.1GB、图形化约 871MB），不入库。
-# 站点实际下载内容见 downloads/ 目录。
+# Java 版原始文件夹约 3.1GB，不入库；其 jar 与源码包见 downloads/java/。
 Java版/
-Scartch版/
 
 # 构建产物
 build/
