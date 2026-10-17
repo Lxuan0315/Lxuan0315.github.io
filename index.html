@@ -407,6 +407,64 @@
       border-radius: 5px;
     }
 
+    .card .meta .mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 7px;
+      border-radius: 5px;
+      border: 1px solid var(--primary-ring);
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: filter 0.18s ease;
+    }
+
+    .card .meta .mini:hover {
+      filter: brightness(1.05);
+    }
+
+    .notice {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      border-left: 3px solid #ff8a3d;
+      border-radius: 10px;
+      background: var(--panel);
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-mid);
+    }
+
+    .notice b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .notice a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .notice a:hover {
+      text-decoration: underline;
+    }
+
+    .notice code {
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 12px;
+      background: var(--kind-bg);
+      color: var(--kind-text);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
     .dl {
       flex: 0 0 auto;
       display: inline-flex;
@@ -567,6 +625,22 @@
 
     var JAR_DIR = "downloads/java/jar";
     var SRC_DIR = "downloads/java/src";
+
+    // 3.0.x 依赖 JetBrains Runtime（含 JCEF 浏览器内核），普通 JDK 跑不起来，
+    // 所以这两个版本直接提供「完整包」（jar + 运行环境 + web + run.bat），
+    // 作为 GitHub Release 附件，不占用 Pages 配额。
+    // 附件命名规则：Winllx-<版本号去空格>-full.zip
+    var FULL_PKG_BASE =
+      "https://github.com/Lxuan0315/Lxuan0315.github.io/releases/download/winllx-3.0.x/";
+
+    function needRuntime(ver) {
+      return /^Winllx 3\.0\./.test(ver);
+    }
+
+    function fullPkgUrl(ver) {
+      return FULL_PKG_BASE + encodeURIComponent(ver.replace(/\s+/g, "-") + "-full.zip");
+    }
+
     var EXE_DIR = "Scartch版/Scartch应用版";
     var SB3_DIR = "Scartch版/Scartch代码版";
 
@@ -730,27 +804,66 @@
       document.getElementById("count").textContent = "共 " + total + " 个版本";
       renderChips();
 
+      var needRt =
+        state.cat === "java" &&
+        items.some(function (it) {
+          return needRuntime(it.ver);
+        });
+
+      var notice = "";
+      if (needRt) {
+        notice =
+          state.sub === "src"
+            ? '<div class="notice"><div>WinLLx <b>3.0.0 / 3.0.1</b> 的源码需要 JetBrains Runtime（含 JCEF 与 javac）才能编译，' +
+              "普通 JDK 编译不出来 —— 可点卡片上的「运行环境」下载完整包。" +
+              "<b>2.x 版本不受影响</b>。</div></div>"
+            : '<div class="notice"><div>WinLLx <b>3.0.0 / 3.0.1</b> 是用 JetBrains Runtime（含 JCEF 浏览器内核）编译的，' +
+              "普通 JDK 无法运行，因此这两个版本直接提供 <b>完整包</b>（已内含运行环境，约 270MB）：" +
+              "解压后双击 <code>run.bat</code> 即可运行。" +
+              "若你已有运行环境，也可点卡片上的「仅 jar」只下 jar。" +
+              "<b>2.x 版本不需要</b>完整包。</div></div>";
+      }
+
       var list = document.getElementById("list");
-      list.innerHTML = items
-        .map(function (it, i) {
-          var isLatest = i === 0;
-          var delay = Math.min(i * 18, 260);
-          return (
-            '<div class="card" style="animation-delay:' + delay + 'ms">' +
-            '<div class="info">' +
-            '<div class="ver">' +
-            esc(it.ver) +
-            (isLatest ? '<span class="tag">最新</span>' : "") +
-            "</div>" +
-            '<div class="meta"><span class="kind">' + esc(it.kind) + "</span></div>" +
-            "</div>" +
-            '<a class="dl" href="' + esc(toUrl(it.path)) + '" download>' +
-            ICON_DL +
-            "下载</a>" +
-            "</div>"
-          );
-        })
-        .join("");
+      list.innerHTML =
+        notice +
+        items
+          .map(function (it, i) {
+            var isLatest = i === 0;
+            var delay = Math.min(i * 18, 260);
+            var isRt = state.cat === "java" && needRuntime(it.ver);
+            var isFull = isRt && state.sub === "jar";
+            var href = isFull ? fullPkgUrl(it.ver) : toUrl(it.path);
+            var mini = "";
+            if (isRt) {
+              mini = isFull
+                ? '<a class="mini" href="' + esc(toUrl(it.path)) + '" download>仅 jar</a>'
+                : '<a class="mini" href="' + esc(fullPkgUrl(it.ver)) + '" target="_blank" rel="noopener">运行环境</a>';
+            }
+            return (
+              '<div class="card" style="animation-delay:' + delay + 'ms">' +
+              '<div class="info">' +
+              '<div class="ver">' +
+              esc(it.ver) +
+              (isLatest ? '<span class="tag">最新</span>' : "") +
+              "</div>" +
+              '<div class="meta"><span class="kind">' +
+              esc(isFull ? "完整包" : it.kind) +
+              "</span>" +
+              mini +
+              "</div>" +
+              "</div>" +
+              '<a class="dl" href="' +
+              esc(href) +
+              '"' +
+              (isFull ? ' target="_blank" rel="noopener"' : " download") +
+              ">" +
+              ICON_DL +
+              "下载</a>" +
+              "</div>"
+            );
+          })
+          .join("");
     }
 
     document.querySelectorAll(".menu-item").forEach(function (btn) {
