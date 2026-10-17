@@ -4,20 +4,72 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WinLLx 历史版本下载</title>
+  <script>
+    // 提前定色，避免首屏闪白/闪黑
+    (function () {
+      try {
+        var m = localStorage.getItem("winllx-theme") || "system";
+        var dark =
+          m === "dark" ||
+          (m === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
+  </script>
   <style>
     :root {
       --bg: #f4f6fb;
       --bg-2: #eaeff8;
       --panel: #ffffff;
       --border: #e6eaf2;
+      --border-hover: #d7e0f5;
       --text: #1f2329;
       --text-sub: #8a90a0;
+      --text-mid: #5b6376;
       --primary: #3370ff;
       --primary-2: #5b8cff;
       --primary-soft: #eef3ff;
+      --primary-ring: rgba(51, 112, 255, 0.16);
+      --hover: #f3f6fc;
+      --seg-bg: #e9eef8;
+      --dot: #ccd3e0;
+      --kind-bg: #f3f6fc;
+      --kind-text: #6b7590;
+      --chip-shadow: 0 1px 3px rgba(24, 39, 75, 0.12);
+      --logo-shadow: 0 6px 14px rgba(51, 112, 255, 0.32);
+      --dl-shadow: 0 4px 12px rgba(51, 112, 255, 0.28);
       --shadow: 0 1px 2px rgba(24, 39, 75, 0.04), 0 6px 18px rgba(24, 39, 75, 0.06);
       --shadow-hover: 0 2px 4px rgba(24, 39, 75, 0.06), 0 14px 32px rgba(24, 39, 75, 0.12);
       --radius: 14px;
+      color-scheme: light;
+    }
+
+    [data-theme="dark"] {
+      --bg: #14161b;
+      --bg-2: #0e1013;
+      --panel: #1c1f26;
+      --border: #2a2e38;
+      --border-hover: #3d4453;
+      --text: #e7eaf2;
+      --text-sub: #8b93a6;
+      --text-mid: #a8b0c2;
+      --primary: #5b8cff;
+      --primary-2: #7aa2ff;
+      --primary-soft: rgba(91, 140, 255, 0.14);
+      --primary-ring: rgba(91, 140, 255, 0.24);
+      --hover: #242833;
+      --seg-bg: #232733;
+      --dot: #454b5c;
+      --kind-bg: #242833;
+      --kind-text: #9aa3b5;
+      --chip-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --logo-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+      --dl-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 18px rgba(0, 0, 0, 0.28);
+      --shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.36), 0 14px 32px rgba(0, 0, 0, 0.44);
+      color-scheme: dark;
     }
 
     * {
@@ -79,7 +131,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 14px rgba(51, 112, 255, 0.32);
+      box-shadow: var(--logo-shadow);
     }
 
     .brand-name {
@@ -131,13 +183,13 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #ccd3e0;
+      background: var(--dot);
       flex: 0 0 8px;
       transition: background 0.18s ease, box-shadow 0.18s ease;
     }
 
     .menu-item:hover {
-      background: #f3f6fc;
+      background: var(--hover);
     }
 
     .menu-item.active {
@@ -148,7 +200,7 @@
 
     .menu-item.active .dot {
       background: var(--primary);
-      box-shadow: 0 0 0 4px rgba(51, 112, 255, 0.16);
+      box-shadow: 0 0 0 4px var(--primary-ring);
     }
 
     .side-foot {
@@ -156,6 +208,46 @@
       font-size: 12px;
       color: var(--text-sub);
       padding: 0 10px;
+    }
+
+    /* ===== 外观切换 ===== */
+    .theme {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .seg {
+      display: flex;
+      gap: 3px;
+      padding: 3px;
+      background: var(--seg-bg);
+      border-radius: 11px;
+    }
+
+    .seg-btn {
+      flex: 1 1 0;
+      border: 0;
+      padding: 7px 2px;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-mid);
+      font-size: 12px;
+      font-family: inherit;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .seg-btn:hover {
+      color: var(--text);
+    }
+
+    .seg-btn.active {
+      background: var(--panel);
+      color: var(--primary);
+      font-weight: 600;
+      box-shadow: var(--chip-shadow);
     }
 
     /* ===== 主区域 ===== */
@@ -192,7 +284,7 @@
       font-size: 12px;
       color: var(--primary);
       background: var(--primary-soft);
-      border: 1px solid rgba(51, 112, 255, 0.16);
+      border: 1px solid var(--primary-ring);
       padding: 6px 12px;
       border-radius: 999px;
       white-space: nowrap;
@@ -202,7 +294,7 @@
       display: inline-flex;
       gap: 4px;
       padding: 4px;
-      background: #e9eef8;
+      background: var(--seg-bg);
       border-radius: 12px;
       margin-bottom: 20px;
       align-self: flex-start;
@@ -217,7 +309,7 @@
       padding: 8px 16px;
       border-radius: 9px;
       background: transparent;
-      color: #5b6376;
+      color: var(--text-mid);
       font-size: 13px;
       font-family: inherit;
       cursor: pointer;
@@ -232,7 +324,7 @@
       background: var(--panel);
       color: var(--primary);
       font-weight: 600;
-      box-shadow: 0 1px 3px rgba(24, 39, 75, 0.12);
+      box-shadow: var(--chip-shadow);
     }
 
     .list {
@@ -257,7 +349,7 @@
     .card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-hover);
-      border-color: #d7e0f5;
+      border-color: var(--border-hover);
     }
 
     @keyframes rise {
@@ -309,8 +401,8 @@
 
     .card .meta .kind {
       font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-      background: #f3f6fc;
-      color: #6b7590;
+      background: var(--kind-bg);
+      color: var(--kind-text);
       padding: 1px 7px;
       border-radius: 5px;
     }
@@ -327,7 +419,7 @@
       font-size: 13px;
       font-weight: 600;
       text-decoration: none;
-      box-shadow: 0 4px 12px rgba(51, 112, 255, 0.28);
+      box-shadow: var(--dl-shadow);
       transition: filter 0.18s ease, transform 0.18s ease;
     }
 
@@ -398,6 +490,11 @@
         white-space: nowrap;
       }
 
+      .theme,
+      .seg {
+        flex: 0 0 auto;
+      }
+
       .main {
         padding: 22px 18px 36px;
       }
@@ -433,6 +530,15 @@
           <span class="dot"></span>图形化
         </button>
       </nav>
+
+      <div class="theme">
+        <div class="menu-title">外观</div>
+        <div class="seg">
+          <button class="seg-btn" data-mode="light">浅色</button>
+          <button class="seg-btn" data-mode="dark">深色</button>
+          <button class="seg-btn" data-mode="system">跟随系统</button>
+        </div>
+      </div>
 
       <div class="side-foot">WinLLx 历史版本归档</div>
     </aside>
@@ -589,7 +695,8 @@
         });
       }
 
-      return items;
+      // 最新的排在最前面
+      return items.reverse();
     }
 
     function renderChips() {
@@ -626,7 +733,7 @@
       var list = document.getElementById("list");
       list.innerHTML = items
         .map(function (it, i) {
-          var isLatest = i === total - 1;
+          var isLatest = i === 0;
           var delay = Math.min(i * 18, 260);
           return (
             '<div class="card" style="animation-delay:' + delay + 'ms">' +
@@ -659,6 +766,44 @@
     });
 
     render();
+
+    /* ===== 外观：浅色 / 深色 / 跟随系统 ===== */
+    var THEME_KEY = "winllx-theme";
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function themeMode() {
+      try {
+        return localStorage.getItem(THEME_KEY) || "system";
+      } catch (e) {
+        return "system";
+      }
+    }
+
+    function applyTheme(mode) {
+      var dark = mode === "dark" || (mode === "system" && mq.matches);
+      document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+      Array.prototype.forEach.call(document.querySelectorAll(".seg-btn"), function (b) {
+        b.classList.toggle("active", b.dataset.mode === mode);
+      });
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll(".seg-btn"), function (btn) {
+      btn.addEventListener("click", function () {
+        try {
+          localStorage.setItem(THEME_KEY, btn.dataset.mode);
+        } catch (e) {}
+        applyTheme(btn.dataset.mode);
+      });
+    });
+
+    function onSchemeChange() {
+      if (themeMode() === "system") applyTheme("system");
+    }
+
+    if (mq.addEventListener) mq.addEventListener("change", onSchemeChange);
+    else if (mq.addListener) mq.addListener(onSchemeChange);
+
+    applyTheme(themeMode());
   </script>
 </body>
 </html>
