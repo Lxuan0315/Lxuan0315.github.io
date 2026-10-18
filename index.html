@@ -648,7 +648,7 @@
       "Winllx 1.0.0", "Winllx 2.0.0", "Winllx 2.1.0", "Winllx 2.2.0",
       "Winllx 2.2.3", "Winllx 2.2.4", "Winllx 2.2.5", "Winllx 2.2.6",
       "Winllx 2.2.7", "Winllx 2.2.8", "Winllx 2.2.9", "Winllx 2.3.0",
-      "Winllx 2.3.1", "Winllx 3.0.0", "Winllx 3.0.1"
+      "Winllx 2.3.1", "Winllx 3.0.0", "Winllx 3.0.1", "Winllx 3.0.2"
     ];
 
     var EXE_FILES = [
@@ -814,10 +814,10 @@
       if (needRt) {
         notice =
           state.sub === "src"
-            ? '<div class="notice"><div>WinLLx <b>3.0.0 / 3.0.1</b> 的源码需要 JetBrains Runtime（含 JCEF 与 javac）才能编译，' +
+            ? '<div class="notice"><div>WinLLx <b>3.0.0 / 3.0.1 / 3.0.2</b> 的源码需要 JetBrains Runtime（含 JCEF 与 javac）才能编译，' +
               "普通 JDK 编译不出来 —— 可点卡片上的「运行环境」下载完整包。" +
               "<b>2.x 版本不受影响</b>。</div></div>"
-            : '<div class="notice"><div>WinLLx <b>3.0.0 / 3.0.1</b> 是用 JetBrains Runtime（含 JCEF 浏览器内核）编译的，' +
+            : '<div class="notice"><div>WinLLx <b>3.0.0 / 3.0.1 / 3.0.2</b> 是用 JetBrains Runtime（含 JCEF 浏览器内核）编译的，' +
               "普通 JDK 无法运行，因此这两个版本直接提供 <b>完整包</b>（已内含运行环境，约 270MB）：" +
               "解压后双击 <code>run.bat</code> 即可运行。" +
               "若你已有运行环境，也可点卡片上的「仅 jar」只下 jar。" +
